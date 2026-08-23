@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SHAURYA OS - Windows XP Personal Operating System</title>
+  <style>
+    /* ==========================================
+       SHAURYA OS - CORE SYSTEM STYLES (XP LUNA)
+       ========================================== */
+    :root {
+      --xp-blue-header: linear-gradient(180deg, #0058e6 0%, #2989d8 50%, #207cca 51%, #1e5799 100%);
+      --xp-blue-dark: #003296;
+      --xp-titlebar-active: linear-gradient(180deg, #0058e6 0%, #3a81f6 8%, #124ed0 93%, #002e99 100%);
+      --xp-titlebar-inactive: linear-gradient(180deg, #7a96df 0%, #a0b6ee 8%, #7891d7 93%, #5973b9 100%);
+      --xp-start-green: linear-gradient(180deg, #388e3c 0%, #4caf50 10%, #2e7d32 90%, #1b5e20 100%);
+      --xp-taskbar-blue: linear-gradient(180deg, #1f53a3 0%, #2262be 12%, #184894 85%, #0f3066 100%);
+      --xp-button-face: #ece9d8;
+      --xp-button-border: #716f64;
+      --xp-window-bg: #ece9d8;
+      --xp-font: "Tahoma", "Segoe UI", Geneva, Verdana, sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: var(--xp-font);
+      font-size: 11px;
+    }
+    body, html {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #000;
+      position: fixed;
+    }
+    /* --- BOOT SCREEN --- */
+    #boot-screen {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: #000;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .boot-logo {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .boot-logo h1 {
+      font-size: 32px;
+      font-weight: bold;
+      font-style: italic;
+      letter-spacing: 1px;
+      text-shadow: 2px 2px 4px #444;
+    }
+    .boot-logo span {
+      color: #ff6a00;
+      font-style: normal;
+    }
+    .boot-sub {
+      font-size: 12px;
+      color: #aaa;
+      letter-spacing: 3px;
+    }
+    .xp-progress-container {
+      width: 180px;
+      height: 14px;
+      border: 2px solid #b2b2b2;
+      border-radius: 4px;
+      padding: 1px;
+      background: #000;
+      overflow: hidden;
+      position: relative;
+    }
+    .xp-progress-bar {
+      width: 30px;
+      height: 100%;
+      background: linear-gradient(90deg, #3068db, #528bf8, #3068db);
+      border-radius: 2px;
+      position: absolute;
+      animation: xp-progress 1.6s infinite linear;
+      box-shadow: 0 0 5px #528bf8;
+    }
+    @keyframes xp-progress {
+      0% { left: -30px; }
+      100% { left: 180px; }
+    }
+    /* --- WELCOME / LOGIN SCREEN --- */
+    #welcome-screen {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: linear-gradient(180deg, #002d96 0%, #0058e6 30%, #0058e6 70%, #001f66 100%);
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+    }
+    .welcome-header {
+      height: 80px;
+      background: #001b57;
+      border-bottom: 2px solid #528bf8;
+      display: flex;
+      align-items: center;
+      padding: 0 30px;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .welcome-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .welcome-divider {
+      width: 1px;
+      height: 250px;
+      background: linear-gradient(180deg, transparent, #528bf8, transparent);
+      margin: 0 40px;
+    }
+    .welcome-left {
+      text-align: right;
+      color: #fff;
+    }
+    .welcome-left h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    .welcome-left p {
+      color: #a0c0ff;
+      font-size: 13px;
+    }
+    .welcome-users {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .user-card:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: #7ca8ff;
+    }
+    /* PROFILE IMAGE HOLDER */
+    .user-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 4px;
+      border: 2px solid #fff;
+      background: #ff8c00;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #fff;
+      font-weight: bold;
+      overflow: hidden;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+    }
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .user-info {
+      color: #fff;
+    }
+    .user-name {
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .user-status {
+      font-size: 11px;
+      color: #ccc;
+    }
+    .login-form {
+      margin-top: 6px;
+      display: flex;
+      gap: 6px;
+    }
+    .login-input {
+      padding: 4px 8px;
+      border: 1px solid #002d96;
+      border-radius: 3px;
+      outline: none;
+      font-size: 12px;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+    .login-btn {
+      padding: 4px 10px;
+      background: #4caf50;
+      color: #fff;
+      border: 1px solid #1b5e20;
+      border-radius: 3px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .welcome-footer {
+      height: 60px;
+      background: #001133;
+      border-top: 2px solid #002d96;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+    }
+    .shutdown-btn-login {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #d32f2f;
+      color: #fff;
+      border: 1px solid #801010;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    /* --- DESKTOP ENVIRONMENT --- */
+    #desktop {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: calc(100vh - 30px);
+      background: #1d65cc url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="%231e5799"/><stop offset="40%" stop-color="%23207cca"/><stop offset="70%" stop-color="%237db9e8"/><stop offset="100%" stop-color="%23a6cbee"/></linearGradient><linearGradient id="hill1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="%2343a047"/><stop offset="100%" stop-color="%231b5e20"/></linearGradient><linearGradient id="hill2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="%2366bb6a"/><stop offset="100%" stop-color="%232e7d32"/></linearGradient></defs><rect width="1000" height="700" fill="url(%23sky)"/><path d="M-100,500 Q200,350 500,480 T1100,420 L1100,700 L-100,700 Z" fill="url(%23hill1)"/><path d="M-50,550 Q350,420 800,520 T1200,480 L1200,700 L-50,700 Z" fill="url(%23hill2)"/></svg>') no-repeat center center;
+      background-size: cover;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      padding: 10px;
+      gap: 12px;
+      transition: background 0.3s;
+    }
+    /* Desktop Icons */
+    .desktop-icon {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: 3px;
+      padding: 4px;
+      text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000;
+    }
+    .desktop-icon:hover {
+      background: rgba(49, 106, 197, 0.4);
+      border-color: rgba(49, 106, 197, 0.6);
+    }
+    .desktop-icon.selected {
+      background: rgba(49, 106, 197, 0.7);
+      border-color: #316ac5;
+    }
+    .icon-img {
+      font-size: 30px;
+      margin-bottom: 4px;
+    }
+    .icon-title {
+      font-size: 11px;
+      line-height: 12px;
+      word-break: break-word;
+    }
+    /* --- TASKBAR --- */
+    #taskbar {
+      position: fixed;
+      bottom: 0; left: 0; width: 100vw; height: 30px;
+      background: var(--xp-taskbar-blue);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      border-top: 1px solid #386fc0;
+      justify-content: space-between;
+    }
+    .start-btn {
+      height: 100%;
+      padding: 0 16px 0 10px;
+      background: var(--xp-start-green);
+      border: none;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+      color: #fff;
+      font-weight: bold;
+      font-style: italic;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.4);
+      text-shadow: 1px 1px 2px #000;
+    }
+    .start-btn:hover {
+      filter: brightness(1.1);
+    }
+    .taskbar-tasks {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 8px;
+      overflow-x: auto;
+    }
+    .task-item {
+      height: 24px;
+      width: 150px;
+      max-width: 160px;
+      background: linear-gradient(180deg, #3a81f6 0%, #124ed0 100%);
+      border: 1px solid #002e99;
+      border-radius: 3px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .task-item.active {
+      background: linear-gradient(180deg, #1e458e 0%, #102958 100%);
+      border-color: #081630;
+      box-shadow: inset 1px 1px 2px #000;
+    }
+    .system-tray {
+      height: 100%;
+      background: linear-gradient(180deg, #0c4296 0%, #1052b6 50%, #083070 100%);
+      border-left: 1px solid #1852a3;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      font-size: 11px;
+      box-shadow: inset 1px 0 2px rgba(0,0,0,0.3);
+    }
+    .tray-icon {
+      cursor: pointer;
+      font-size: 13px;
+    }
+    /* --- START MENU --- */
+    #start-menu {
+      position: fixed;
+      bottom: 30px; left: 0;
+      width: 380px;
+      height: 480px;
+      background: #fff;
+      border-top-right-radius: 8px;
+      border-top-left-radius: 8px;
+      box-shadow: 4px 4px 15px rgba(0,0,0,0.5);
+      z-index: 10001;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid #002d96;
+    }
+    .start-header {
+      height: 55px;
+      background: var(--xp-blue-header);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 12px;
+      color: #fff;
+      border-bottom: 2px solid #ff8c00;
+    }
+    .start-header .user-avatar {
+      width: 38px;
+      height: 38px;
+    }
+    .start-body {
+      flex: 1;
+      display: flex;
+      background: #d3e5fa;
+    }
+    .start-left {
+      width: 50%;
+      background: #fff;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border-right: 1px solid #b5d3ff;
+      overflow-y: auto;
+    }
+    .start-right {
+      width: 50%;
+      background: #d3e5fa;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow-y: auto;
+    }
+    .start-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      color: #000;
+      text-decoration: none;
+    }
+    .start-item:hover {
+      background: #316ac5;
+      color: #fff;
+    }
+    .start-item-bold {
+      font-weight: bold;
+    }
+    .start-separator {
+      height: 1px;
+      background: #ccc;
+      margin: 4px 0;
+    }
+    .start-footer {
+      height: 42px;
+      background: linear-gradient(180deg, #4282d3 0%, #1752a2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 12px;
+      gap: 10px;
+    }
+    .start-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 3px;
+    }
+    .start-action-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    /* --- WINDOW MANAGER --- */
+    .xp-window {
+      position: absolute;
+      background: var(--xp-window-bg);
+      border: 3px solid #0058e6;
+      border-radius: 8px 8px 0 0;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      min-width: 280px;
+      min-height: 200px;
+      overflow: hidden;
+    }
+    .xp-window.inactive {
+      border-color: #7a96df;
+    }
+    .window-header {
+      height: 30px;
+      background: var(--xp-titlebar-active);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 6px 0 10px;
+      color: #fff;
+      font-weight: bold;
+      cursor: move;
+    }
+    .xp-window.inactive .window-header {
+      background: var(--xp-titlebar-inactive);
+    }
+    .window-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-shadow: 1px 1px 2px #000;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .window-controls {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .win-btn {
+      width: 21px;
+      height: 21px;
+      border-radius: 3px;
+      border: 1px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      font-size: 11px;
+      box-shadow: inset 0 0 2px rgba(255,255,255,0.8);
+    }
+    .win-btn-min { background: linear-gradient(180deg, #3c8dff, #0042ad); }
+    .win-btn-max { background: linear-gradient(180deg, #3c8dff, #0042ad); }
+    .win-btn-close { background: linear-gradient(180deg, #f27254, #d32f2f); }
+    .win-btn:hover { filter: brightness(1.2); }
+    .window-menubar {
+      height: 24px;
+      background: #ece9d8;
+      border-bottom: 1px solid #d0ccc0;
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+      gap: 12px;
+    }
+    .menu-item {
+      padding: 2px 6px;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+    .menu-item:hover {
+      background: #316ac5;
+      color: #fff;
+    }
+    .window-toolbar {
+      height: 34px;
+      background: #ece9d8;
+      border-bottom: 1px solid #b5b0a1;
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      gap: 6px;
+    }
+    .tb-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 6px;
+      border: 1px solid #716f64;
+      border-radius: 3px;
+      cursor: pointer;
+      background: #f0eee2;
+      font-weight: normal;
+    }
+    .tb-btn:hover {
+      background: #ffffff;
+      border-color: #316ac5;
+    }
+    .address-bar {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      border: 1px solid #7f9db9;
+      padding: 2px 6px;
+    }
+    .address-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+    .window-body {
+      flex: 1;
+      background: #fff;
+      position: relative;
+      overflow: auto;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+    .window-statusbar {
+      height: 20px;
+      background: #ece9d8;
+      border-top: 1px solid #d0ccc0;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      font-size: 11px;
+      color: #555;
+    }
+    /* --- APPLICATION SPECIFIC STYLES --- */
+    /* Paint App */
+    .paint-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .paint-toolbar {
+      background: #ece9d8;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 4px;
+      gap: 4px;
+    }
+    .paint-tool-btn {
+      padding: 3px 8px;
+      border: 1px solid #716f64;
+      background: #fff;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+    .paint-tool-btn.active {
+      background: #316ac5;
+      color: #fff;
+      border-color: #002d96;
+    }
+    .paint-canvas-holder {
+      flex: 1;
+      background: #808080;
+      overflow: auto;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+    .paint-canvas {
+      background: #fff;
+      cursor: crosshair;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    }
+    /* Live Projects App */
+    .project-card {
+      border: 1px solid #7f9db9;
+      background: #fdfdfd;
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 10px;
+      box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    }
+    .project-card h3 {
+      font-size: 13px;
+      color: #003296;
+      margin-bottom: 4px;
+    }
+    .project-card p {
+      font-size: 11px;
+      color: #444;
+      margin-bottom: 8px;
+    }
+    .project-actions {
+      display: flex;
+      gap: 8px;
+    }
+    /* Notepad */
+    .notepad-textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      padding: 8px;
+      resize: none;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 13px;
+    }
+    /* CMD */
+    .cmd-body {
+      background: #000;
+      color: #00ff00;
+      font-family: "Consolas", "Courier New", monospace;
+      padding: 8px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .cmd-output {
+      flex: 1;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 16px;
+    }
+    .cmd-line {
+      display: flex;
+      align-items: center;
+    }
+    .cmd-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #00ff00;
+      font-family: inherit;
+      font-size: inherit;
+      margin-left: 6px;
+    }
+    /* Calculator */
+    .calc-container {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #ece9d8;
+      height: 100%;
+    }
+    .calc-display {
+      background: #fff;
+      border: 1px solid #7f9db9;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 10px;
+      font-size: 18px;
+      font-family: "Consolas", monospace;
+      font-weight: bold;
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .calc-btn {
+      height: 32px;
+      background: linear-gradient(180deg, #fff 0%, #ece9d8 100%);
+      border: 1px solid #716f64;
+      border-radius: 3px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    /* Browser */
+    .browser-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .browser-iframe {
+      flex: 1;
+      width: 100%;
+      border: none;
+    }
+    .browser-fallback {
+      padding: 30px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 14px;
+      background: #f5f5f0;
+    }
+    /* --- POWER OVERLAY --- */
+    #power-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 999999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .power-dialog {
+      width: 340px;
+      background: linear-gradient(180deg, #002d96 0%, #0058e6 100%);
+      border: 2px solid #528bf8;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      text-align: center;
+    }
+    .power-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+    .power-options {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+    .power-opt-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: #fff;
+    }
+    .power-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+    .pwr-standby { background: #e6a100; }
+    .pwr-turnoff { background: #d32f2f; }
+    .pwr-restart { background: #388e3c; }
+    .power-status-msg {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 15px;
+      color: #ffca28;
+    }
+    /* MOBILE RESPONSIVE FIXES */
+    @media (max-width: 768px) {
+      .xp-window {
+        width: 100vw !important;
+        height: calc(100vh - 30px) !important;
+        top: 0 !important;
+        left: 0 !important;
+        border-radius: 0;
+      }
+      #start-menu {
+        width: 100vw;
+        height: calc(100vh - 30px);
+        bottom: 30px;
+        left: 0;
+      }
+      .task-item {
+        width: 90px;
+      }
+    }
+    /* ==========================================
+       PRIVATE USER BROWSER SELECTOR & ERROR STYLES
+       ========================================== */
+    .private-browser-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background: #ece9d8;
+    }
+    .private-selector-view {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: #f0eee2;
+      overflow-y: auto;
+    }
+    .private-selector-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .private-selector-header h2 {
+      font-size: 16px;
+      color: #002d96;
+      margin-bottom: 4px;
+    }
+    .private-selector-header p {
+      font-size: 11px;
+      color: #555;
+    }
+    .private-options-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      width: 100%;
+      max-width: 800px;
+    }
+    .private-option-card {
+      flex: 1 1 220px;
+      max-width: 280px;
+      background: #ffffff;
+      border: 2px solid #0058e6;
+      border-radius: 6px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.12);
+      transition: all 0.2s ease-in-out;
+    }
+    .private-option-card:hover {
+      border-color: #ff8c00;
+      transform: translateY(-2px);
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.2);
+    }
+    .private-option-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    .private-option-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: #002d96;
+      margin-bottom: 4px;
+    }
+    .private-option-url {
+      font-size: 10px;
+      color: #666;
+      font-family: monospace;
+      word-break: break-all;
+      margin-bottom: 12px;
+    }
+    .private-card-btn {
+      padding: 5px 14px;
+      background: linear-gradient(180deg, #3a81f6 0%, #124ed0 100%);
+      color: #ffffff;
+      border: 1px solid #002e99;
+      border-radius: 3px;
+      font-weight: bold;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .private-card-btn:hover {
+      background: linear-gradient(180deg, #1e458e 0%, #102958 100%);
+    }
+    .private-error-view {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #ece9d8;
+      text-align: center;
+    }
+    .private-error-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+    .private-error-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #d32f2f;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .private-error-msg {
+      font-size: 12px;
+      color: #333333;
+      margin-bottom: 20px;
+    }
+    .private-error-btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .private-action-btn {
+      padding: 6px 14px;
+      background: #f0eee2;
+      border: 1px solid #716f64;
+      border-radius: 3px;
+      font-weight: bold;
+      font-size: 11px;
+      cursor: pointer;
+      color: #000;
+    }
+    .private-action-btn:hover {
+      background: #ffffff;
+      border-color: #316ac5;
+    }
+  </style>
+</head>
+<body>
+  <!-- 1. BOOT SCREEN -->
+  <div id="boot-screen">
+    <div class="boot-logo">
+      <h1>Microsoft<span>Windows</span></h1>
+      <div class="boot-sub">XP PROFESSIONAL (SHAURYA OS ED.)</div>
+    </div>
+    <div class="xp-progress-container">
+      <div class="xp-progress-bar"></div>
+    </div>
+  </div>
+  <!-- 2. WELCOME / LOGIN SCREEN -->
+  <div id="welcome-screen">
+    <div class="welcome-header">
+      <div>Windows XP Professional</div>
+    </div>
+    <div class="welcome-body">
+      <div class="welcome-left">
+        <h2>To begin, click your user name</h2>
+        <p>SHAURYA OS Edition - Interactive Portfolio</p>
+      </div>
+      <div class="welcome-divider"></div>
+      <div class="welcome-users">
+        <!-- Guest Account -->
+        <div class="user-card" onclick="loginUser('Guest')">
+          <div class="user-avatar" style="background:#009688;">👤</div>
+          <div class="user-info">
+            <div class="user-name">Guest</div>
+            <div class="user-status">Public Portfolio Showcase</div>
+          </div>
+        </div>
+        <!-- Shaurya Mittal Account -->
+        <div class="user-card" onclick="selectShauryaAccount()">
+          <!-- EXACT PROFILE IMAGE REQUIREMENT INSIDE ACCOUNT SELECTION SCREEN -->
+          <div class="user-avatar" style="background:#ff8c00;">
+            <img src="shauryajpg.jpg" alt="Shaurya Mittal" onerror="this.style.display='none'; this.parentElement.innerText='👑';">
+          </div>
+          <div class="user-info">
+            <div class="user-name">SHAURYA MITTAL</div>
+            <div class="user-status">System Owner</div>
+            <div id="shaurya-login-box" class="login-form" style="display:none;" onclick="event.stopPropagation();">
+              <input type="password" id="shaurya-pass" class="login-input" placeholder="Password..." onkeydown="if(event.key==='Enter') verifyOwnerLogin();">
+              <button class="login-btn" onclick="verifyOwnerLogin()">➔</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="welcome-footer">
+      <button class="shutdown-btn-login" onclick="triggerTurnOffDialog()">⏻ Turn off computer</button>
+      <div style="color:#aaa;">SHAURYA OS v2.5</div>
+    </div>
+  </div>
+  <!-- 3. DESKTOP ENVIRONMENT -->
+  <div id="desktop" onclick="deselectAllIcons(); closeStartMenu();">
+    <!-- Desktop Icons populated dynamically by JS -->
+  </div>
+  <!-- 4. START MENU -->
+  <div id="start-menu">
+    <div class="start-header">
+      <div class="user-avatar" id="start-user-avatar">👤</div>
+      <div>
+        <div style="font-weight:bold; font-size:13px;" id="start-user-name">Guest</div>
+        <div style="font-size:10px; color:#d0e0ff;" id="start-user-sub">Shaurya Portfolio Desktop</div>
+      </div>
+    </div>
+    <div class="start-body" id="start-body-content">
+      <!-- Dynamic per user -->
+    </div>
+    <div class="start-footer">
+      <button class="start-action-btn" onclick="triggerLogOff()">🚪 Log Off</button>
+      <button class="start-action-btn" onclick="triggerTurnOffDialog()">⏻ Turn Off Computer</button>
+    </div>
+  </div>
+  <!-- 5. TASKBAR -->
+  <div id="taskbar">
+    <button class="start-btn" onclick="toggleStartMenu(event)">
+      <span style="font-size:16px;">❖</span> start
+    </button>
+    <div class="taskbar-tasks" id="taskbar-tasks">
+      <!-- Task buttons -->
+    </div>
+    <div class="system-tray">
+      <span class="tray-icon" title="Audio Volume" onclick="AudioSys.playClick()">🔊</span>
+      <span class="tray-icon" title="Network Connected">📶</span>
+      <span id="system-clock">12:00 PM</span>
+    </div>
+  </div>
+  <!-- 6. POWER OVERLAY -->
+  <div id="power-overlay">
+    <div class="power-dialog" id="power-dialog-box">
+      <div class="power-title">Turn off computer</div>
+      <div class="power-options">
+        <button class="power-opt-btn" onclick="performStandby()">
+          <div class="power-icon pwr-standby">🌙</div>
+          <span>Stand By</span>
+        </button>
+        <button class="power-opt-btn" onclick="performShutdownSequence()">
+          <div class="power-icon pwr-turnoff">⏻</div>
+          <span>Turn Off</span>
+        </button>
+        <button class="power-opt-btn" onclick="performRestartSequence()">
+          <div class="power-icon pwr-restart">🔄</div>
+          <span>Restart</span>
+        </button>
+      </div>
+      <button class="login-btn" style="padding:6px 16px;" onclick="closePowerOverlay()">Cancel</button>
+    </div>
+    <div id="power-status-box" style="display:none; text-align:center;">
+      <div class="boot-logo">
+        <h1>Microsoft<span>Windows</span></h1>
+      </div>
+      <div class="power-status-msg" id="power-status-text">Logging off...</div>
+    </div>
+  </div>
+  <script>
+    /* ==========================================
+       WEB AUDIO SYNTHESIZER
+       ========================================== */
+    const AudioSys = {
+      ctx: null,
+      muted: false,
+      init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      },
+      playTone(freq, type, duration, delay = 0) {
+        if (this.muted) return;
+        this.init();
+        setTimeout(() => {
+          try {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + duration);
+          } catch(e) {}
+        }, delay);
+      },
+      playStartup() {
+        this.playTone(523.25, 'sine', 0.6, 0);   
+        this.playTone(659.25, 'sine', 0.6, 150); 
+        this.playTone(783.99, 'sine', 0.6, 300); 
+        this.playTone(1046.50, 'sine', 0.9, 450);
+      },
+      playLogin() {
+        this.playTone(440, 'triangle', 0.3, 0);
+        this.playTone(554.37, 'triangle', 0.3, 100);
+        this.playTone(659.25, 'triangle', 0.5, 200);
+      },
+      playLogoff() {
+        this.playTone(659.25, 'triangle', 0.3, 0);
+        this.playTone(554.37, 'triangle', 0.3, 100);
+        this.playTone(440, 'triangle', 0.5, 200);
+      },
+      playClick() {
+        this.playTone(800, 'sine', 0.05, 0);
+      },
+      playError() {
+        this.playTone(150, 'sawtooth', 0.3, 0);
+      }
+    };
+    /* ==========================================
+       VIRTUAL FILESYSTEM (VFS)
+       ========================================== */
+    const VFS = {
+      files: {
+        'C:/Users/Guest/Documents/About_Shaurya.txt': 'SHAURYA MITTAL\nAI Systems & Creative Technology Engineer\nPassionate about web systems, computer vision, and interactive web apps.',
+        'C:/Users/Guest/Documents/Resume.txt': 'Shaurya Mittal - Resume & Engineering Projects',
+        'C:/Users/Shaurya/Documents/Resume.txt': 'SHAURYA MITTAL\nFull-Stack Engineer & OS Architect\nPassionate about high-performance web systems.'
+      },
+      getFile(path) { return this.files[path] || null; },
+      saveFile(path, content) {
+        this.files[path] = content;
+        localStorage.setItem('shauryaos_vfs', JSON.stringify(this.files));
+      },
+      init() {
+        const saved = localStorage.getItem('shauryaos_vfs');
+        if (saved) {
+          try { this.files = JSON.parse(saved); } catch(e) {}
+        }
+      }
+    };
+    VFS.init();
+    /* ==========================================
+       GLOBAL STATE & CONFIG
+       ========================================== */
+    let currentUser = null; // 'Guest' or 'Shaurya Mittal'
+    let windowZIndex = 100;
+    const windows = {};
+    /* GUEST DESKTOP SHORTCUTS */
+    const GUEST_DESKTOP_ICONS = [
+      { id: 'about', title: 'About Me', icon: '👤', action: () => openApp('about') },
+      { id: 'projects', title: 'Projects', icon: '🚀', action: () => openApp('projects') },
+      { id: 'live_websites', title: 'Live Websites', icon: '🌐', action: () => openApp('live_websites') },
+      { id: 'resume', title: 'Resume', icon: '📄', action: () => openApp('resume') },
+      { id: 'contact', title: 'Contact', icon: '✉️', action: () => openApp('contact') },
+      { id: 'linkedin', title: 'LinkedIn', icon: '💼', action: () => openPublicProfile('https://www.linkedin.com/in/shaurya-mittal-487b17374') },
+      { id: 'github', title: 'GitHub', icon: '💻', action: () => openPublicProfile('https://github.com/shaurya1233') },
+      { id: 'instagram', title: 'Instagram', icon: '📸', action: () => openPublicProfile('https://www.instagram.com/drunk___captain') },
+      { id: 'paint', title: 'Paint', icon: '🎨', action: () => openApp('paint') },
+      { id: 'browser', title: 'Browser', icon: '🌐', action: () => openApp('browser') },
+      { id: 'computer', title: 'My Computer', icon: '💻', action: () => openApp('explorer', 'My Computer') },
+      { id: 'personalisation', title: 'Personalisation', icon: '⚙️', action: () => openApp('personalisation') },
+      { id: 'refresh', title: 'Refresh', icon: '🔄', action: () => refreshGuestDesktop() }
+    ];
+    /* PRIVATE SHAURYA DESKTOP SHORTCUTS (UNTOUCHED) */
+    const PRIVATE_DESKTOP_ICONS = [
+      { id: 'computer', title: 'My Computer', icon: '💻', action: () => openApp('explorer', 'My Computer') },
+      { id: 'documents', title: 'My Documents', icon: '📁', action: () => openApp('explorer', 'My Documents') },
+      { id: 'browser', title: 'Internet Browser', icon: '🌐', action: () => openApp('browser') },
+      { id: 'notepad', title: 'Notepad', icon: '📝', action: () => openApp('notepad') },
+      { id: 'paint', title: 'Paint', icon: '🎨', action: () => openApp('paint') },
+      { id: 'calculator', title: 'Calculator', icon: '🧮', action: () => openApp('calculator') },
+      { id: 'cmd', title: 'Command Prompt', icon: '💻', action: () => openApp('cmd') },
+      { id: 'minesweeper', title: 'Minesweeper', icon: '💣', action: () => openApp('minesweeper') },
+      { id: 'projects', title: 'Shaurya Projects', icon: '🚀', action: () => openApp('projects') },
+      { id: 'controlpanel', title: 'Control Panel', icon: '⚙️', action: () => openApp('controlpanel') },
+    ];
+    /* SYSTEM INIT */
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        document.getElementById('boot-screen').style.display = 'none';
+        document.getElementById('welcome-screen').style.display = 'flex';
+        AudioSys.playStartup();
+      }, 2000);
+      updateClock();
+      setInterval(updateClock, 1000);
+      // F5 Refresh Key Handling
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'F5') {
+          e.preventDefault();
+          if (currentUser === 'Guest') {
+            refreshGuestDesktop();
+          } else {
+            location.reload();
+          }
+        }
+      });
+    });
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      document.getElementById('system-clock').innerText = `${hours}:${minutes} ${ampm}`;
+    }
+    /* USER AUTHENTICATION & LOCKING */
+    function selectShauryaAccount() {
+      const box = document.getElementById('shaurya-login-box');
+      box.style.display = box.style.display === 'none' ? 'flex' : 'none';
+      if (box.style.display === 'flex') {
+        document.getElementById('shaurya-pass').focus();
+      }
+    }
+    function verifyOwnerLogin() {
+      const pass = document.getElementById('shaurya-pass').value;
+      if (pass === 'ram151515') {
+        loginUser('Shaurya Mittal');
+      } else {
+        AudioSys.playError();
+        alert('Wrong password! Please try again.');
+      }
+    }
+    function loginUser(username) {
+      currentUser = username;
+      AudioSys.playLogin();
+      document.getElementById('welcome-screen').style.display = 'none';
+      
+      // Update Start Menu Header
+      document.getElementById('start-user-name').innerText = username;
+      document.getElementById('start-user-sub').innerText = username === 'Shaurya Mittal' ? 'System Owner' : 'Shaurya Portfolio Desktop';
+      document.getElementById('start-user-avatar').innerText = username === 'Shaurya Mittal' ? '👑' : '👤';
+      renderDesktopIcons();
+      renderStartMenu();
+      // ABSOLUTE PRIVATE ACCOUNT REQUIREMENT: PRIVATE AUTO LAUNCH IPOTV
+      if (username === 'Shaurya Mittal') {
+        setTimeout(() => {
+          openApp('browser', 'https://ipotv.net/');
+        }, 500);
+      }
+    }
+    function refreshGuestDesktop() {
+      AudioSys.playClick();
+      renderDesktopIcons();
+      const desktop = document.getElementById('desktop');
+      desktop.style.opacity = '0.7';
+      setTimeout(() => { desktop.style.opacity = '1.0'; }, 150);
+    }
+    /* RENDER DESKTOP ICONS */
+    function renderDesktopIcons() {
+      const desktop = document.getElementById('desktop');
+      desktop.innerHTML = '';
+      const iconsToRender = (currentUser === 'Guest') ? GUEST_DESKTOP_ICONS : PRIVATE_DESKTOP_ICONS;
+      iconsToRender.forEach(item => {
+        const iconDiv = document.createElement('div');
+        iconDiv.className = 'desktop-icon';
+        iconDiv.onclick = (e) => {
+          e.stopPropagation();
+          selectIcon(iconDiv);
+        };
+        iconDiv.ondblclick = (e) => {
+          e.stopPropagation();
+          AudioSys.playClick();
+          item.action();
+        };
+        iconDiv.innerHTML = `
+          <div class="icon-img">${item.icon}</div>
+          <div class="icon-title">${item.title}</div>
+        `;
+        desktop.appendChild(iconDiv);
+      });
+    }
+    function selectIcon(element) {
+      deselectAllIcons();
+      element.classList.add('selected');
+    }
+    function deselectAllIcons() {
+      document.querySelectorAll('.desktop-icon').forEach(el => el.classList.remove('selected'));
+    }
+    /* RENDER START MENU CONTENT */
+    function renderStartMenu() {
+      const startBody = document.getElementById('start-body-content');
+      if (currentUser === 'Guest') {
+        startBody.innerHTML = `
+          <div class="start-left">
+            <div class="start-item start-item-bold" onclick="openApp('about')">👤 About Me</div>
+            <div class="start-item start-item-bold" onclick="openApp('projects')">🚀 Projects</div>
+            <div class="start-item start-item-bold" onclick="openApp('live_websites')">🌐 Live Websites</div>
+            <div class="start-item" onclick="openApp('resume')">📄 Resume</div>
+            <div class="start-item" onclick="openApp('contact')">✉️ Contact</div>
+            <div class="start-separator"></div>
+            <div class="start-item" onclick="openApp('paint')">🎨 Paint</div>
+            <div class="start-item" onclick="openApp('browser')">🌐 Browser</div>
+            <div class="start-item" onclick="openApp('personalisation')">⚙️ Personalisation</div>
+          </div>
+          <div class="start-right">
+            <div class="start-item start-item-bold" onclick="openPublicProfile('https://www.linkedin.com/in/shaurya-mittal-487b17374')">💼 LinkedIn</div>
+            <div class="start-item start-item-bold" onclick="openPublicProfile('https://github.com/shaurya1233')">💻 GitHub</div>
+            <div class="start-item start-item-bold" onclick="openPublicProfile('https://www.instagram.com/drunk___captain')">📸 Instagram</div>
+            <div class="start-separator"></div>
+            <div class="start-item" onclick="openApp('explorer', 'My Documents')">📁 My Documents</div>
+            <div class="start-item" onclick="openApp('explorer', 'My Computer')">💻 My Computer</div>
+          </div>
+        `;
+      } else {
+        startBody.innerHTML = `
+          <div class="start-left">
+            <div class="start-item start-item-bold" onclick="openApp('browser')">🌐 Internet (Browser)</div>
+            <div class="start-item start-item-bold" onclick="openApp('notepad')">📝 Notepad</div>
+            <div class="start-item" onclick="openApp('paint')">🎨 Paint</div>
+            <div class="start-item" onclick="openApp('calculator')">🧮 Calculator</div>
+            <div class="start-item" onclick="openApp('cmd')">💻 Command Prompt</div>
+            <div class="start-separator"></div>
+            <div class="start-item" onclick="openApp('minesweeper')">💣 Minesweeper</div>
+            <div class="start-item" onclick="openApp('controlpanel')">⚙️ Control Panel</div>
+          </div>
+          <div class="start-right">
+            <div class="start-item start-item-bold" onclick="openApp('explorer', 'My Documents')">📁 My Documents</div>
+            <div class="start-item start-item-bold" onclick="openApp('explorer', 'My Computer')">💻 My Computer</div>
+            <div class="start-separator"></div>
+            <div class="start-item" onclick="openApp('projects')">🚀 Shaurya Projects</div>
+          </div>
+        `;
+      }
+    }
+    function toggleStartMenu(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('start-menu');
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+      AudioSys.playClick();
+    }
+    function closeStartMenu() {
+      document.getElementById('start-menu').style.display = 'none';
+    }
+    function openPublicProfile(url) {
+      closeStartMenu();
+      AudioSys.playClick();
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+    /* ==========================================
+       WINDOW MANAGER
+       ========================================== */
+    function createWindow(id, title, icon, width, height, contentHTML) {
+      if (windows[id]) {
+        focusWindow(id);
+        if (windows[id].minimized) restoreWindow(id);
+        return windows[id];
+      }
+      const winEl = document.createElement('div');
+      winEl.className = 'xp-window';
+      winEl.id = `win-${id}`;
+      winEl.style.width = `${Math.min(width, window.innerWidth)}px`;
+      winEl.style.height = `${Math.min(height, window.innerHeight - 30)}px`;
+      winEl.style.left = `${Math.max(20, 40 + Object.keys(windows).length * 20)}px`;
+      winEl.style.top = `${Math.max(20, 30 + Object.keys(windows).length * 20)}px`;
+      winEl.style.zIndex = ++windowZIndex;
+      winEl.innerHTML = `
+        <div class="window-header" onmousedown="startDragWindow(event, '${id}')">
+          <div class="window-title"><span>${icon}</span> <span>${title}</span></div>
+          <div class="window-controls">
+            <button class="win-btn win-btn-min" onclick="minimizeWindow('${id}')">_</button>
+            <button class="win-btn win-btn-max" onclick="maximizeWindow('${id}')">☐</button>
+            <button class="win-btn win-btn-close" onclick="closeWindow('${id}')">✕</button>
+          </div>
+        </div>
+        <div class="window-body">${contentHTML}</div>
+        <div class="window-statusbar">Ready</div>
+      `;
+      winEl.onclick = () => focusWindow(id);
+      document.body.appendChild(winEl);
+      const taskBtn = document.createElement('div');
+      taskBtn.className = 'task-item active';
+      taskBtn.id = `task-${id}`;
+      taskBtn.onclick = () => toggleTaskWindow(id);
+      taskBtn.innerHTML = `<span>${icon}</span> <span>${title}</span>`;
+      document.getElementById('taskbar-tasks').appendChild(taskBtn);
+      windows[id] = { element: winEl, taskBtn: taskBtn, minimized: false, maximized: false };
+      focusWindow(id);
+      return windows[id];
+    }
+    function focusWindow(id) {
+      Object.keys(windows).forEach(wId => {
+        windows[wId].element.classList.add('inactive');
+        windows[wId].taskBtn.classList.remove('active');
+      });
+      if (windows[id]) {
+        windows[id].element.classList.remove('inactive');
+        windows[id].element.style.zIndex = ++windowZIndex;
+        windows[id].taskBtn.classList.add('active');
+      }
+    }
+    function closeWindow(id) {
+      if (windows[id]) {
+        windows[id].element.remove();
+        windows[id].taskBtn.remove();
+        delete windows[id];
+        AudioSys.playClick();
+      }
+    }
+    function minimizeWindow(id) {
+      if (windows[id]) {
+        windows[id].element.style.display = 'none';
+        windows[id].minimized = true;
+        windows[id].taskBtn.classList.remove('active');
+      }
+    }
+    function restoreWindow(id) {
+      if (windows[id]) {
+        windows[id].element.style.display = 'flex';
+        windows[id].minimized = false;
+        focusWindow(id);
+      }
+    }
+    function toggleTaskWindow(id) {
+      if (windows[id].minimized) {
+        restoreWindow(id);
+      } else if (windows[id].element.classList.contains('inactive')) {
+        focusWindow(id);
+      } else {
+        minimizeWindow(id);
+      }
+    }
+    function maximizeWindow(id) {
+      const win = windows[id];
+      if (!win) return;
+      if (win.maximized) {
+        win.element.style.width = win.oldW;
+        win.element.style.height = win.oldH;
+        win.element.style.top = win.oldT;
+        win.element.style.left = win.oldL;
+        win.maximized = false;
+      } else {
+        win.oldW = win.element.style.width;
+        win.oldH = win.element.style.height;
+        win.oldT = win.element.style.top;
+        win.oldL = win.element.style.left;
+        win.element.style.top = '0px';
+        win.element.style.left = '0px';
+        win.element.style.width = '100vw';
+        win.element.style.height = 'calc(100vh - 30px)';
+        win.maximized = true;
+      }
+    }
+    let draggingWinId = null;
+    let dragOffsetX = 0, dragOffsetY = 0;
+    function startDragWindow(e, id) {
+      draggingWinId = id;
+      focusWindow(id);
+      const win = windows[id].element;
+      dragOffsetX = e.clientX - win.offsetLeft;
+      dragOffsetY = e.clientY - win.offsetTop;
+      document.addEventListener('mousemove', onDragWindow);
+      document.addEventListener('mouseup', stopDragWindow);
+    }
+    function onDragWindow(e) {
+      if (!draggingWinId) return;
+      const win = windows[draggingWinId].element;
+      win.style.left = `${Math.max(0, e.clientX - dragOffsetX)}px`;
+      win.style.top = `${Math.max(0, e.clientY - dragOffsetY)}px`;
+    }
+    function stopDragWindow() {
+      draggingWinId = null;
+      document.removeEventListener('mousemove', onDragWindow);
+      document.removeEventListener('mouseup', stopDragWindow);
+    }
+    /* ==========================================
+       APPLICATIONS
+       ========================================== */
+    function openApp(appName, param = '') {
+      closeStartMenu();
+      AudioSys.playClick();
+      switch(appName) {
+        case 'about':
+          createWindow('about', 'About Shaurya Mittal', '👤', 550, 420, `
+            <div style="padding:16px; height:100%; overflow-y:auto; line-height:1.6; color:#222;">
+              <div style="display:flex; align-items:center; gap:16px; margin-bottom:12px; border-bottom:2px solid #316ac5; padding-bottom:10px;">
+                <div style="font-size:36px;">👤</div>
+                <div>
+                  <h2 style="font-size:18px; color:#002d96;">SHAURYA MITTAL</h2>
+                  <p style="font-weight:bold; color:#555;">AI Systems & Creative Technology Engineer</p>
+                </div>
+              </div>
+              <p style="margin-bottom:10px;">
+                Welcome to SHAURYA OS! I am a full-stack engineer and creative technologist specializing in web application architecture, artificial intelligence systems, computer vision, and interactive web experiences.
+              </p>
+              <h3 style="color:#003296; margin-top:10px; margin-bottom:6px;">Core Specializations:</h3>
+              <ul style="padding-left:20px; margin-bottom:12px;">
+                <li>Web Development & Dynamic Browser Environments</li>
+                <li>Artificial Intelligence & Machine Learning Integrations</li>
+                <li>Creative Technology & High-Performance Canvas Graphics</li>
+                <li>Computer Vision & Interactive User Interfaces</li>
+                <li>Technical Experimentation & Open-Source Software</li>
+              </ul>
+              <div style="background:#e8f0fe; border-left:4px solid #316ac5; padding:10px; border-radius:3px;">
+                <strong>Guest Mode:</strong> You are exploring the interactive public showcase desktop. Feel free to launch projects, test apps, and explore live links!
+              </div>
+            </div>
+          `);
+          break;
+        case 'live_websites':
+          createWindow('live_websites', 'Live Websites & Projects', '🌐', 640, 460, `
+            <div style="padding:14px; height:100%; overflow-y:auto;">
+              <h2 style="font-size:16px; color:#002d96; margin-bottom:10px;">🌐 Public Live Projects Showcase</h2>
+              <p style="color:#555; margin-bottom:14px;">Select any live application to launch in the internal browser or open directly in a new tab.</p>
+              <div class="project-card">
+                <h3>1. Shaurya Portfolio</h3>
+                <p>Official portfolio platform showcasing engineering work, interactive web experiences, and technology projects.</p>
+                <div class="project-actions">
+                  <button class="tb-btn" onclick="openLiveProject('https://shaurya1233.github.io/Shaurya-Portfolio.../')">🌐 Open in Browser</button>
+                  <button class="tb-btn" onclick="openPublicProfile('https://shaurya1233.github.io/Shaurya-Portfolio.../')">↗ Open in New Tab</button>
+                </div>
+              </div>
+              <div class="project-card">
+                <h3>2. Matter → Universe</h3>
+                <p>Interactive web simulation exploring physics concepts, matter structures, and cosmological visualizations.</p>
+                <div class="project-actions">
+                  <button class="tb-btn" onclick="openLiveProject('https://shaurya-matter-universe.vercel.app/')">🌐 Open in Browser</button>
+                  <button class="tb-btn" onclick="openPublicProfile('https://shaurya-matter-universe.vercel.app/')">↗ Open in New Tab</button>
+                </div>
+              </div>
+              <div class="project-card">
+                <h3>3. Bharat Remembered Memorial</h3>
+                <p>Digital memorial and tribute web experience commemorating historical legacy and national heroes.</p>
+                <div class="project-actions">
+                  <button class="tb-btn" onclick="openLiveProject('https://shaurya1233.github.io/SHAURYA-MITTAL-BHARAT-REMEMBERED-MEMORIAL./')">🌐 Open in Browser</button>
+                  <button class="tb-btn" onclick="openPublicProfile('https://shaurya1233.github.io/SHAURYA-MITTAL-BHARAT-REMEMBERED-MEMORIAL./')">↗ Open in New Tab</button>
+                </div>
+              </div>
+              <div class="project-card">
+                <h3>4. Ashirwad Sanitary & Tiles</h3>
+                <p>Commercial web application and digital product showcase engineered for business catalog presentation.</p>
+                <div class="project-actions">
+                  <button class="tb-btn" onclick="openLiveProject('https://shaurya1233.github.io/mittal-ashirwad-sanitary-tiles/')">🌐 Open in Browser</button>
+                  <button class="tb-btn" onclick="openPublicProfile('https://shaurya1233.github.io/mittal-ashirwad-sanitary-tiles/')">↗ Open in New Tab</button>
+                </div>
+              </div>
+            </div>
+          `);
+          break;
+        case 'contact':
+          createWindow('contact', 'Contact Shaurya Mittal', '✉️', 480, 360, `
+            <div style="padding:16px; height:100%; overflow-y:auto; line-height:1.6;">
+              <h2 style="font-size:16px; color:#002d96; margin-bottom:10px;">📬 Get in Touch</h2>
+              <p style="margin-bottom:14px; color:#444;">Connect with Shaurya Mittal across public engineering platforms and social channels:</p>
+              
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <button class="tb-btn" style="padding:8px 12px; font-size:12px; justify-content:flex-start;" onclick="openPublicProfile('https://www.linkedin.com/in/shaurya-mittal-487b17374')">
+                  💼 LinkedIn Profile (shaurya-mittal-487b17374)
+                </button>
+                <button class="tb-btn" style="padding:8px 12px; font-size:12px; justify-content:flex-start;" onclick="openPublicProfile('https://github.com/shaurya1233')">
+                  💻 GitHub Repository (shaurya1233)
+                </button>
+                <button class="tb-btn" style="padding:8px 12px; font-size:12px; justify-content:flex-start;" onclick="openPublicProfile('https://www.instagram.com/drunk___captain')">
+                  📸 Instagram (@drunk___captain)
+                </button>
+              </div>
+            </div>
+          `);
+          break;
+        case 'browser':
+          if (currentUser === 'Shaurya Mittal') {
+            createWindow('browser', 'Internet Browser', '🌐', 800, 500, `
+              <div class="private-browser-container">
+                <div class="window-toolbar">
+                  <button class="tb-btn" onclick="showPrivateWebsiteOptions()">🏠 Options</button>
+                  <button class="tb-btn" onclick="reloadPrivateWebsite()">🔄 Reload</button>
+                  <div class="address-bar">
+                    <span>🔒</span>
+                    <input type="text" id="private-browser-url" class="address-input" value="Website Options" onkeydown="if(event.key==='Enter') loadPrivateWebsite(this.value);">
+                  </div>
+                  <button class="tb-btn" onclick="if(window.activePrivateUrl) openPublicProfile(window.activePrivateUrl)">↗️ External Tab</button>
+                </div>
+                <div id="private-browser-body" style="flex:1; width:100%; height:calc(100% - 34px); position:relative; overflow:hidden;">
+                </div>
+              </div>
+            `);
+            showPrivateWebsiteOptions();
+          } else {
+            const targetUrl = param || 'https://shaurya1233.github.io/Shaurya-Portfolio.../';
+            createWindow('browser', 'Internet Browser', '🌐', 800, 500, `
+              <div class="browser-container">
+                <div class="window-toolbar">
+                  <button class="tb-btn" onclick="document.getElementById('browser-frame').src='${targetUrl}'">🔄 Reload</button>
+                  <div class="address-bar">
+                    <span>🔒</span>
+                    <input type="text" id="browser-url" class="address-input" value="${targetUrl}" onkeydown="if(event.key==='Enter') document.getElementById('browser-frame').src=this.value;">
+                  </div>
+                  <button class="tb-btn" onclick="openPublicProfile(document.getElementById('browser-url').value)">↗️ External Tab</button>
+                </div>
+                <iframe id="browser-frame" class="browser-iframe" src="${targetUrl}" onerror="handleIframeError('${targetUrl}')"></iframe>
+              </div>
+            `);
+          }
+          break;
+        case 'paint':
+          createWindow('paint', 'Paint', '🎨', 650, 480, `
+            <div class="paint-container">
+              <div class="paint-toolbar">
+                <button class="paint-tool-btn active" id="p-tool-pencil" onclick="setPaintTool('pencil')">✏️ Pencil</button>
+                <button class="paint-tool-btn" id="p-tool-brush" onclick="setPaintTool('brush')">🖌️ Brush</button>
+                <button class="paint-tool-btn" id="p-tool-eraser" onclick="setPaintTool('eraser')">🧹 Eraser</button>
+                <button class="paint-tool-btn" id="p-tool-line" onclick="setPaintTool('line')">➖ Line</button>
+                <button class="paint-tool-btn" id="p-tool-rect" onclick="setPaintTool('rect')">▭ Rect</button>
+                <button class="paint-tool-btn" id="p-tool-circle" onclick="setPaintTool('circle')">⭕ Circle</button>
+                <button class="paint-tool-btn" onclick="clearPaint()">🗑️ Clear</button>
+                <button class="paint-tool-btn" onclick="exportPaintPNG()">💾 Export PNG</button>
+                <input type="color" id="paint-color" value="#000000" style="width:28px; height:24px; cursor:pointer;" onchange="setPaintColor(this.value)">
+              </div>
+              <div class="paint-canvas-holder">
+                <canvas id="paint-cvs" class="paint-canvas" width="600" height="380"></canvas>
+              </div>
+            </div>
+          `);
+          setTimeout(initPaint, 100);
+          break;
+        case 'personalisation':
+          createWindow('personalisation', 'Display & Desktop Personalisation', '⚙️', 460, 380, `
+            <div style="padding:16px; height:100%; display:flex; flex-direction:column; gap:12px;">
+              <h3 style="color:#002d96;">Desktop Wallpaper:</h3>
+              <div style="display:flex; gap:8px;">
+                <button class="tb-btn" onclick="setGuestWallpaper('bliss')">🏞️ Bliss Landscape</button>
+                <button class="tb-btn" onclick="setGuestWallpaper('blue')">🟦 Solid Classic Blue</button>
+                <button class="tb-btn" onclick="setGuestWallpaper('sunset')">🌅 Sunset Gradient</button>
+              </div>
+              
+              <h3 style="color:#002d96; margin-top:8px;">Sound Settings:</h3>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <label><input type="checkbox" id="mute-chk" onchange="AudioSys.muted = this.checked"> Mute System Audio</label>
+              </div>
+              <h3 style="color:#002d96; margin-top:8px;">System Info & Scaling:</h3>
+              <p>Guest Session Theme: Windows XP Luna Standard</p>
+              <button class="tb-btn" style="margin-top:auto;" onclick="refreshGuestDesktop()">Apply & Refresh Desktop</button>
+            </div>
+          `);
+          break;
+        case 'projects':
+          createWindow('projects', 'Shaurya Projects', '🚀', 620, 420, `
+            <div style="padding:16px; height:100%; overflow-y:auto;">
+              <h2 style="color:#002d96; margin-bottom:8px;">🚀 Engineering Projects</h2>
+              <p style="margin-bottom:12px; color:#555;">Browse through active engineering builds and live applications:</p>
+              <button class="tb-btn" style="margin-bottom:12px;" onclick="openApp('live_websites')">🌐 Launch Live Websites Hub</button>
+            </div>
+          `);
+          break;
+        case 'resume':
+          createWindow('resume', 'Shaurya Mittal - Resume', '📄', 550, 450, `
+            <div style="padding:20px; height:100%; overflow-y:auto; line-height:1.6; background:#fff; font-family:'Courier New', monospace;">
+              <h2 style="text-align:center;">SHAURYA MITTAL</h2>
+              <p style="text-align:center;">AI Systems & Creative Technology Engineer</p>
+              <hr style="margin:12px 0;">
+              <h4>TECHNICAL EXPERTISE</h4>
+              <p>• Web Systems, Full-Stack Development, Browsers</p>
+              <p>• Artificial Intelligence, Machine Learning, Computer Vision</p>
+              <p>• Interactive Canvas Graphics & Custom OS Architectures</p>
+            </div>
+          `);
+          break;
+        case 'notepad':
+          createWindow('notepad', 'Notepad', '📝', 500, 350, `<textarea class="notepad-textarea" placeholder="Type here..."></textarea>`);
+          break;
+        case 'calculator':
+          createWindow('calc', 'Calculator', '🧮', 260, 320, `
+            <div class="calc-container">
+              <div id="calc-disp" class="calc-display">0</div>
+              <div class="calc-grid">
+                <button class="calc-btn" onclick="calcInput('7')">7</button>
+                <button class="calc-btn" onclick="calcInput('8')">8</button>
+                <button class="calc-btn" onclick="calcInput('9')">9</button>
+                <button class="calc-btn" onclick="calcOp('/')">/</button>
+                <button class="calc-btn" onclick="calcInput('4')">4</button>
+                <button class="calc-btn" onclick="calcInput('5')">5</button>
+                <button class="calc-btn" onclick="calcInput('6')">6</button>
+                <button class="calc-btn" onclick="calcOp('*')">*</button>
+                <button class="calc-btn" onclick="calcInput('1')">1</button>
+                <button class="calc-btn" onclick="calcInput('2')">2</button>
+                <button class="calc-btn" onclick="calcInput('3')">3</button>
+                <button class="calc-btn" onclick="calcOp('-')">-</button>
+                <button class="calc-btn" onclick="calcInput('0')">0</button>
+                <button class="calc-btn" onclick="calcClear()">C</button>
+                <button class="calc-btn" onclick="calcEquals()">=</button>
+                <button class="calc-btn" onclick="calcOp('+')">+</button>
+              </div>
+            </div>
+          `);
+          break;
+        case 'explorer':
+          createWindow('explorer', param || 'My Computer', '📁', 580, 380, `
+            <div style="padding:14px;">
+              <h3>Folder: ${param}</h3>
+              <hr style="margin:10px 0;">
+              <p>📁 System Files</p>
+              <p>📄 Welcome.txt</p>
+            </div>
+          `);
+          break;
+        default:
+          alert(`Opening ${appName}...`);
+      }
+    }
+    function openLiveProject(url) {
+      openApp('browser', url);
+    }
+    /* IFRAME FALLBACK FOR EMBED-PROTECTED SITES */
+    function handleIframeError(url) {
+      const container = document.querySelector('.browser-container');
+      if (container) {
+        container.innerHTML = `
+          <div class="browser-fallback">
+            <div style="font-size:32px;">🌐</div>
+            <h3 style="color:#002d96;">Opening External Website...</h3>
+            <p style="color:#555; max-width:400px;">
+              This target website restricts inline iframe embedding due to its security headers. You can open it smoothly in a new browser tab:
+            </p>
+            <button class="tb-btn" style="padding:8px 16px; font-weight:bold; font-size:12px;" onclick="openPublicProfile('${url}')">
+              ↗ OPEN IN NEW TAB
+            </button>
+          </div>
+        `;
+      }
+    }
+    /* ==========================================
+       PRIVATE USER WEBSITE SELECTOR & ERROR LOGIC
+       ========================================== */
+    window.activePrivateUrl = '';
+    function showPrivateWebsiteOptions() {
+      window.activePrivateUrl = '';
+      const urlInput = document.getElementById('private-browser-url');
+      if (urlInput) urlInput.value = 'Website Options';
+      
+      const body = document.getElementById('private-browser-body');
+      if (!body) return;
+      
+      body.innerHTML = `
+        <div class="private-selector-view">
+          <div class="private-selector-header">
+            <h2>Select a Website to View</h2>
+            <p>Choose one of the available private website options below:</p>
+          </div>
+          <div class="private-options-grid">
+            <div class="private-option-card" onclick="loadPrivateWebsite('https://iporntv.net/')">
+              <div class="private-option-icon">🌐</div>
+              <div class="private-option-title">1. EXISTING PRIVATE WEBSITE</div>
+              <div class="private-option-url">https://iporntv.net/</div>
+              <button class="private-card-btn">OPEN WEBSITE</button>
+            </div>
+            <div class="private-option-card" 
+<div class="private-option-icon">🌐</div>
+              <div class="private-option-title">2. EXISTING PRIVATE WEBSITE</div>
+              <div class="private-option-url">https://www.megatube.xxx/</div>
+              <button class="private-card-btn">OPEN WEBSITE</button>
+            </div>
+            <div class="private-option-card"
+onclick="loadPrivateWebsite('https://puretaboo.org/')">
+              <div class="private-option-icon">🌐</div>
+              <div class="private-option-title">2. SECOND WEBSITE</div>
+              <div class="private-option-url">https://puretaboo.org/</div>
+              <button class="private-card-btn">OPEN WEBSITE</button>
+            </div>
+            <div class="private-option-card" onclick="loadPrivateWebsite('https://some.porn/pornmodels/hailey-rose/')">
+              <div class="private-option-icon">🌐</div>
+              <div class="private-option-title">3. THIRD WEBSITE</div>
+              <div class="private-option-url">https://some.porn/pornmodels/hailey-rose</div>
+              <button class="private-card-btn">OPEN WEBSITE</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    function loadPrivateWebsite(url) {
+      if (!url) return;
+      window.activePrivateUrl = url;
+      const urlInput = document.getElementById('private-browser-url');
+      if (urlInput) urlInput.value = url;
+      
+      const body = document.getElementById('private-browser-body');
+      if (!body) return;
+      
+      body.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:12px; background:#ece9d8; color:#002d96;">
+          <div class="xp-progress-container"><div class="xp-progress-bar"></div></div>
+          <div style="font-weight:bold; font-size:12px;">Connecting to website...</div>
+        </div>
+      `;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      fetch(url, { mode: 'no-cors', cache: 'no-cache', signal: controller.signal })
+        .then(() => {
+          clearTimeout(timeoutId);
+          renderPrivateIframe(url);
+        })
+        .catch(() => {
+          clearTimeout(timeoutId);
+          showPrivateError(url);
+        });
+    }
+    function renderPrivateIframe(url) {
+      const body = document.getElementById('private-browser-body');
+      if (!body) return;
+      body.innerHTML = `
+        <iframe id="private-browser-frame" class="browser-iframe" style="width:100%; height:100%; border:none;" src="${url}" onerror="showPrivateError('${url}')"></iframe>
+      `;
+      const frame = document.getElementById('private-browser-frame');
+      if (frame) {
+        frame.onerror = () => showPrivateError(url);
+      }
+    }
+    function reloadPrivateWebsite() {
+      if (window.activePrivateUrl) {
+        loadPrivateWebsite(window.activePrivateUrl);
+      } else {
+        showPrivateWebsiteOptions();
+      }
+    }
+    function showPrivateError(url) {
+      const body = document.getElementById('private-browser-body');
+      if (!body) return;
+      body.innerHTML = `
+        <div class="private-error-view">
+          <div class="private-error-icon">🚨</div>
+          <div class="private-error-title">WEBSITE UNAVAILABLE</div>
+          <div class="private-error-msg">Unable to connect to this website right now.</div>
+          <div class="private-error-btns">
+            <button class="private-action-btn" onclick="loadPrivateWebsite('${url}')">[ TRY AGAIN ]</button>
+            <button class="private-action-btn" onclick="showPrivateWebsiteOptions()">[ BACK TO WEBSITE OPTIONS ]</button>
+          </div>
+        </div>
+      `;
+    }
+    /* GUEST WALLPAPER PERSONALISATION */
+    function setGuestWallpaper(type) {
+      const desktop = document.getElementById('desktop');
+      if (type === 'blue') {
+        desktop.style.background = '#0058e6';
+      } else if (type === 'sunset') {
+        desktop.style.background = 'linear-gradient(180deg, #fd5e53 0%, #e684ae 50%, #1e5799 100%)';
+      } else {
+        desktop.style.background = "#1d65cc url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1000\" height=\"700\" viewBox=\"0 0 1000 700\"><defs><linearGradient id=\"sky\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"%231e5799\"/><stop offset=\"40%\" stop-color=\"%23207cca\"/><stop offset=\"70%\" stop-color=\"%237db9e8\"/><stop offset=\"100%\" stop-color=\"%23a6cbee\"/></linearGradient><linearGradient id=\"hill1\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"%2343a047\"/><stop offset=\"100%\" stop-color=\"%231b5e20\"/></linearGradient><linearGradient id=\"hill2\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"%2366bb6a\"/><stop offset=\"100%\" stop-color=\"%232e7d32\"/></linearGradient></defs><rect width=\"1000\" height=\"700\" fill=\"url(%23sky)\"/><path d=\"M-100,500 Q200,350 500,480 T1100,420 L1100,700 L-100,700 Z\" fill=\"url(%23hill1)\"/><path d=\"M-50,550 Q350,420 800,520 T1200,480 L1200,700 L-50,700 Z\" fill=\"url(%23hill2)\"/></svg>') no-repeat center center";
+        desktop.style.backgroundSize = "cover";
+      }
+    }
+    /* PAINT IMPLEMENTATION */
+    let paintTool = 'pencil';
+    let paintColor = '#000000';
+    function setPaintTool(tool) {
+      paintTool = tool;
+      document.querySelectorAll('.paint-tool-btn').forEach(b => b.classList.remove('active'));
+      const btn = document.getElementById(`p-tool-${tool}`);
+      if (btn) btn.classList.add('active');
+    }
+    function setPaintColor(c) {
+      paintColor = c;
+    }
+    function clearPaint() {
+      const cvs = document.getElementById('paint-cvs');
+      if (cvs) cvs.getContext('2d').clearRect(0, 0, cvs.width, cvs.height);
+    }
+    function exportPaintPNG() {
+      const cvs = document.getElementById('paint-cvs');
+      if (!cvs) return;
+      const link = document.createElement('a');
+      link.download = 'shaurya_paint.png';
+      link.href = cvs.toDataURL();
+      link.click();
+    }
+    function initPaint() {
+      const cvs = document.getElementById('paint-cvs');
+      if (!cvs) return;
+      const ctx = cvs.getContext('2d');
+      let drawing = false;
+      let startX = 0, startY = 0;
+      cvs.onmousedown = (e) => {
+        drawing = true;
+        const rect = cvs.getBoundingClientRect();
+        startX = e.clientX - rect.left;
+        startY = e.clientY - rect.top;
+        if (paintTool === 'pencil' || paintTool === 'brush' || paintTool === 'eraser') {
+          ctx.beginPath();
+          ctx.moveTo(startX, startY);
+        }
+      };
+      cvs.onmouseup = () => { drawing = false; };
+      cvs.onmousemove = (e) => {
+        if (!drawing) return;
+        const rect = cvs.getBoundingClientRect();
+        const currentX = e.clientX - rect.left;
+        const currentY = e.clientY - rect.top;
+        ctx.strokeStyle = paintTool === 'eraser' ? '#ffffff' : paintColor;
+        ctx.lineWidth = paintTool === 'brush' ? 6 : (paintTool === 'eraser' ? 12 : 2);
+        ctx.lineCap = 'round';
+        if (paintTool === 'pencil' || paintTool === 'brush' || paintTool === 'eraser') {
+          ctx.lineTo(currentX, currentY);
+          ctx.stroke();
+        }
+      };
+    }
+    /* CALCULATOR LOGIC */
+    let calcVal = '';
+    function calcInput(v) { calcVal += v; document.getElementById('calc-disp').innerText = calcVal; }
+    function calcOp(op) { calcVal += ` ${op} `; document.getElementById('calc-disp').innerText = calcVal; }
+    function calcClear() { calcVal = ''; document.getElementById('calc-disp').innerText = '0'; }
+    function calcEquals() {
+      try {
+        calcVal = String(eval(calcVal));
+        document.getElementById('calc-disp').innerText = calcVal;
+      } catch(e) {
+        document.getElementById('calc-disp').innerText = 'Error';
+        calcVal = '';
+      }
+    }
+    /* POWER & LOGOUT CONTROLS */
+    function triggerLogOff() {
+      closeStartMenu();
+      AudioSys.playLogoff();
+      showPowerStatus('Logging off...', () => {
+        if (currentUser === 'Shaurya Mittal') {
+          sessionStorage.clear();
+        }
+        currentUser = null;
+        Object.keys(windows).forEach(id => closeWindow(id));
+        document.getElementById('welcome-screen').style.display = 'flex';
+      });
+    }
+    function triggerTurnOffDialog() {
+      closeStartMenu();
+      document.getElementById('power-overlay').style.display = 'flex';
+      document.getElementById('power-dialog-box').style.display = 'block';
+      document.getElementById('power-status-box').style.display = 'none';
+    }
+    function closePowerOverlay() {
+      document.getElementById('power-overlay').style.display = 'none';
+    }
+    function performStandby() {
+      closePowerOverlay();
+      document.body.style.filter = 'brightness(0.2)';
+      setTimeout(() => {
+        alert('Click anywhere to wake up SHAURYA OS.');
+        document.body.style.filter = 'none';
+      }, 500);
+    }
+    function performShutdownSequence() {
+      AudioSys.playLogoff();
+      document.getElementById('power-dialog-box').style.display = 'none';
+      document.getElementById('power-status-box').style.display = 'block';
+      
+      const txt = document.getElementById('power-status-text');
+      txt.innerText = 'Saving your settings...';
+      setTimeout(() => txt.innerText = 'Closing applications...', 1200);
+      setTimeout(() => txt.innerText = 'SHUTTING DOWN...', 2400);
+      setTimeout(() => {
+        document.body.innerHTML = `
+          <div style="background:#000; color:#ffb700; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:20px; font-weight:bold;">
+            <p>It is now safe to close your browser window.</p>
+            <button onclick="location.reload()" style="margin-top:20px; padding:8px 16px; background:#0058e6; color:#fff; border:none; border-radius:4px; cursor:pointer;">Restart SHAURYA OS</button>
+          </div>
+        `;
+      }, 3800);
+    }
+    function performRestartSequence() {
+      closePowerOverlay();
+      showPowerStatus('Restarting system...', () => {
+        location.reload();
+      });
+    }
+    function showPowerStatus(msg, callback) {
+      document.getElementById('power-overlay').style.display = 'flex';
+      document.getElementById('power-dialog-box').style.display = 'none';
+      document.getElementById('power-status-box').style.display = 'block';
+      document.getElementById('power-status-text').innerText = msg;
+      setTimeout(() => {
+        closePowerOverlay();
+        if (callback) callback();
+      }, 1800);
+    }
+  </script>
+</body>
+</html>
+
